@@ -21,7 +21,6 @@ class DotPrinter:
 
     def start(self):
         if self.thread and self.thread.is_alive():
-            print("Dot printer is already running.")
             return 
         self.stop_event.clear()
         self.thread = threading.Thread(target=self._print_dots)
@@ -38,6 +37,21 @@ class DotPrinter:
             print(".", end="", flush=True)
             time.sleep(self.interval)
 
+def get_file_from_user():
+    if len(sys.argv) > 1:
+        file_path = sys.argv[1]
+        print(f"ドラッグ＆ドロップで受け取ったファイル: {file_path}")
+    else:
+        file_path = filedialog.askopenfilename(
+            title="音声ファイルを選択してください",
+            filetypes=[("Audio files", "*.mp3 *.wav *.ogg *.flac *.m4a"), ("All files", "*.*")]
+        )
+        if not file_path:
+            print("キャンセルされました。")
+            sys.exit()
+
+    return file_path
+
 
 def convert_to_ogg(file_path, file_name, extension, target_sec=TARGET_DURATION_SEC):
     dot_printer = DotPrinter()
@@ -52,23 +66,16 @@ def convert_to_ogg(file_path, file_name, extension, target_sec=TARGET_DURATION_S
         audio_length_ms = len(audio)
 
         while chunk_start < audio_length_ms:
-            # Estimate the end of the chunk
-            chunk_end = chunk_start + target_sec * 1000
-
-            # Limit to file end
-            chunk_end = min(chunk_end, audio_length_ms)
+            chunk_end = min(chunk_start + target_sec * 1000, audio_length_ms)
+            split_point = chunk_end
 
             # Try to find a silence near the end
-            chunk_segment = audio[chunk_start:chunk_end]
-            silence_points = silence.detect_silence(chunk_segment, min_silence_len=700, silence_thresh=-40)
+            silence_points = silence.detect_silence(audio[chunk_start:chunk_end], min_silence_len=700, silence_thresh=-40)
             
             if silence_points:
                 # Pick the last silence before the end
                 last_silence = silence_points[-1][0]
                 split_point = chunk_start + last_silence
-            else:
-                # No silence found; hard split
-                split_point = chunk_end
 
             chunk = audio[chunk_start:split_point]
             if (len(chunk) == 0):
@@ -76,21 +83,18 @@ def convert_to_ogg(file_path, file_name, extension, target_sec=TARGET_DURATION_S
             filename = "{file_name}-{number}.ogg".format(file_name=file_name,number=(chunk_id))
             chunk.export(filename, format="ogg")
 
-            print(f"Exported: {filename} ({len(chunk) / 1000:.1f} seconds)")
+            print(f"\n{filename} を出力しました ({len(chunk) / 1000:.1f} 秒)")
             chunk_start = split_point
             chunk_id += 1
             
         dot_printer.stop()
         print("\n音声ファイルの分割と圧縮が完了しました")
-        
-    except: 
+
+    except Exception as e:
         dot_printer.stop()
-        print('error :(') 
-        errors = sys.exc_info() 
-        for e in errors: 
-            print(str(e)) 
-            input('\nPress enter to exit.') 
-            exit()
+        print("エラーが発生しました")
+        print("エラー", str(e))
+        return
 
 def send_to_chatgpt(ogg_files):
     dot_printer = DotPrinter()
@@ -118,29 +122,31 @@ def send_to_chatgpt(ogg_files):
             prompt = transcription.text
 
         except openai.error.APIError as e:
-            # Print the full error message
             dot_printer.stop()
-            print(f"APIError: {e}")
-            input("Press Enter to exit...")
+            print("APIエラー", f"APIError: {e}")
+            sys.exit()
         except openai.error.APIStatusError as e:
-            # For status-related errors, print the status code and other details
             dot_printer.stop()
-            print(f"Status Code: {e.http_status}")
-            print(f"Error Type: {e.error}")
-            print(f"Error Message: {e.error.message}")
-            input("Press Enter to exit...")
+            print("ステータスエラー", f"Status: {e.http_status}\nType: {e.error}\nMessage: {e.error.message}")
+            sys.exit()
         except Exception as e:
-            # Catch-all for any other exceptions
             dot_printer.stop()
-            print(f"An unexpected error occurred: {e}")
-            input("Press Enter to exit...")        
+            print("予期せぬエラー: ", str(e))
+            sys.exit()
         finally:
-            dot_printer.stop()  
+            dot_printer.stop()
+            
+    print("一時ファイルを削除中…")
+    for file in ogg_files:
+        try:
+            os.remove(file)
+        except Exception as e:
+            print(f"{file} の削除に失敗: {e}")
 
 if __name__ == "__main__":
     root = tk.Tk()
     root.withdraw()
-    file_path = filedialog.askopenfilename()
+    file_path = get_file_from_user()
     file_name, extension = os.path.splitext(os.path.basename(file_path))
     
     ogg_files = [file for file in os.listdir('.') if file.endswith('.ogg') and file_name in file]
@@ -153,4 +159,4 @@ if __name__ == "__main__":
     
     send_to_chatgpt(ogg_files)
     
-    input('\n完了しました。終了するには任意のキーを押してください。')
+    input('\n処理が完了しました。終了するには任意のキーを押してください。')
