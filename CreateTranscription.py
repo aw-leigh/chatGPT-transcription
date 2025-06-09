@@ -102,39 +102,39 @@ def send_to_chatgpt(ogg_files):
     prompt = ""
      
     for idx, file in enumerate(ogg_files):
-        audio_file = open("./{file}".format(file=file), "rb")
-        
+
         print('\nChatGPTの文字起こしサービスに「{file}」を送信しています'.format(file=file))
         dot_printer.start()
-         
-        try:
-            transcription = client.audio.transcriptions.create(
-            model="whisper-1", 
-            language="ja",
-            file=audio_file,
-            prompt=prompt
-        )           
-            print('\n「{}」の文字起こしを保存しています…'.format(file))
-            with open("{}-文字起こし-{}.txt".format(file.split('.')[0], idx + 1), "w", encoding="utf8") as output_file:
-                output_file.write(transcription.text)
-            print('\n{}-文字起こし-{} を保存しました！'.format(file.split('.')[0], idx + 1))
-                
-            prompt = transcription.text
 
-        except openai.error.APIError as e:
-            dot_printer.stop()
-            print("APIエラー", f"APIError: {e}")
-            sys.exit()
-        except openai.error.APIStatusError as e:
-            dot_printer.stop()
-            print("ステータスエラー", f"Status: {e.http_status}\nType: {e.error}\nMessage: {e.error.message}")
-            sys.exit()
-        except Exception as e:
-            dot_printer.stop()
-            print("予期せぬエラー: ", str(e))
-            sys.exit()
-        finally:
-            dot_printer.stop()
+        with open(file, "rb") as audio_file:
+            try:
+                transcription = client.audio.transcriptions.create(
+                model="whisper-1",
+                language="ja",
+                file=audio_file,
+                prompt=prompt
+            )
+                print('\n「{}」の文字起こしを保存しています…'.format(file))
+                with open("{}-文字起こし-{}.txt".format(file.split('.')[0], idx + 1), "w", encoding="utf8") as output_file:
+                    output_file.write(transcription.text)
+                print('\n{}-文字起こし-{} を保存しました！'.format(file.split('.')[0], idx + 1))
+
+                prompt = transcription.text
+
+            except openai.error.APIError as e:
+                dot_printer.stop()
+                print("APIエラー", f"APIError: {e}")
+                sys.exit()
+            except openai.error.APIStatusError as e:
+                dot_printer.stop()
+                print("ステータスエラー", f"Status: {e.http_status}\nType: {e.error}\nMessage: {e.error.message}")
+                sys.exit()
+            except Exception as e:
+                dot_printer.stop()
+                print("予期せぬエラー: ", str(e))
+                sys.exit()
+            finally:
+                dot_printer.stop()
             
     print("一時ファイルを削除中…")
     for file in ogg_files:
