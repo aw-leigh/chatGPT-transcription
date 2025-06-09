@@ -9,7 +9,7 @@ from tkinter import filedialog
 import threading
 import time
 
-TARGET_DURATION_SEC = 45 * 60  # 45 minutes
+TARGET_DURATION = 45 * 60 * 1000 # 45 minutes
 MAX_FILE_SIZE_MB = 25
 
 
@@ -53,7 +53,7 @@ def get_file_from_user():
     return file_path
 
 
-def convert_to_ogg(file_path, file_name, extension, target_sec=TARGET_DURATION_SEC):
+def convert_to_ogg(file_path, file_name, extension, target_ms=TARGET_DURATION):
     dot_printer = DotPrinter()
     
     try:
@@ -66,7 +66,7 @@ def convert_to_ogg(file_path, file_name, extension, target_sec=TARGET_DURATION_S
         audio_length_ms = len(audio)
 
         while chunk_start < audio_length_ms:
-            chunk_end = min(chunk_start + target_sec * 1000, audio_length_ms)
+            chunk_end = min(chunk_start + target_ms, audio_length_ms)
             split_point = chunk_end
 
             # Try to find a silence near the end
