@@ -9,10 +9,12 @@ OpenAI の Whisper（音声文字起こし）APIを使うには、以下の手�
 1. 下記URLにアクセス：  
    👉 https://platform.openai.com/signup
 
-2. **メールアドレス、Google、または Microsoft アカウント**でサインアップ  
-   ![signup](screenshot-signup.png)
+2. **メールアドレス、Google、または Microsoft アカウント**でサインアップ
 
-3. アカウント作成直後に、以下のような画面が表示されます：
+   <img src="https://github.com/user-attachments/assets/6131e74f-3003-42c2-be5b-9ba47aa61897" height="600">
+
+
+4. アカウント作成直後に、以下のような画面が表示されます：
 
    ### ✅ オーガナイゼーション設定
    - 組織名（任意）を入力
@@ -20,18 +22,26 @@ OpenAI の Whisper（音声文字起こし）APIを使うには、以下の手�
      **→「Not technical（非技術者）」を選んでください。**  
      これは設定に影響しませんので安心してください。
 
+   <img src="https://github.com/user-attachments/assets/68adc60c-6f42-40cf-b07e-3e150c9969ed" height="600">
+
    ### ✅ チーム招待（スキップ可）
-   - 他のメンバーのメールを入力する画面が出ますが、**何もせず「Skip」**してOKです。
+   - 他のメンバーのメールを入力する画面が出ますが、何もせず「I'll invite my team later」を押してOKです。
+
+   <img src="https://github.com/user-attachments/assets/8fc67725-3436-44a5-9749-f3b8d1b56281" height="600">
 
 ---
 
 ## 📌 2. APIキーとプロジェクトを作成する
 
-1. 続いて自動的に「プロジェクト作成 & APIキーの生成」画面になります。
+1. 続いて自動的に「プロジェクト作成 & APIキーの生成」画面になります。適当にプロジェクト名とキー名を入力してください。
+
+   <img src="https://github.com/user-attachments/assets/04edd88e-bfe8-4e8c-a658-643774087d7a" height="600">
 
 2. 「Generate API key」ボタンをクリックすると、APIキー（例：`sk-...`）が表示されます！
 
-3. **⚠️ この画面で必ずAPIキーをコピーしてください。二度と表示されません！**
+   **🚨🚨🚨 この画面で必ずAPIキーをコピーしてください。二度と表示されません！🚨🚨🚨**
+
+   <img src="https://github.com/user-attachments/assets/ec9908f0-6282-4725-ae93-1f2788797c38" height="600">
 
 4. 「Continue」で進んでください。
 
@@ -43,9 +53,12 @@ OpenAI の Whisper（音声文字起こし）APIを使うには、以下の手�
 
 2. 最低 $5（¥700程度）を入力して、**Add a payment method（支払い情報追加）**へ進みます。
 
-3. クレジットカード情報を入力して、支払い登録を完了してください。
+   <img src="https://github.com/user-attachments/assets/75ed8612-7943-40ac-b083-48fcb8de2335" height="600">
 
+3. クレジットカード情報を入力して、支払い登録を完了してください。
 ⚠️ Whisper API は無料枠対象外のため、**支払い登録と残高の追加が必須**です。
+
+   <img src="https://github.com/user-attachments/assets/092bc4d5-a51a-40f0-8d1f-4e08e1b8a929" height="600">
 
 ---
 
@@ -66,27 +79,29 @@ OpenAI の Whisper（音声文字起こし）APIを使うには、以下の手�
 
 ## 📌 5. APIキーを環境変数に設定する（セキュアな保存方法）
 
-スクリプトやアプリから安全にAPIキーを使うには、`OPENAI_API_KEY` という環境変数として保存します。
+アプリから安全にAPIキーを使うには、`OPENAI_API_KEY` という環境変数として保存します。
 
 ---
 
 ### 🪟 Windows の場合
 
 1. スタートメニューで「**環境変数**」と検索し、「**システム環境変数の編集**」を選択  
-   ![win-search](screenshot-env-search.png)
+   <img src="https://github.com/user-attachments/assets/4c7e53b0-1811-4a2b-b320-9312e81acbb7" height="700">
+
 
 2. 「ユーザー環境変数」セクションで「新規(N)...」をクリック
+   <img src="https://github.com/user-attachments/assets/0d1a4b46-87b0-4e38-881d-b1b63597f281" height="700">
 
 3. 以下のように入力：
 
    - 変数名（Variable name）：`OPENAI_API_KEY`  
    - 変数値（Variable value）：（あなたのAPIキー）
 
-   ![win-env](screenshot-win-env.png)
+   <img src="https://github.com/user-attachments/assets/cbf5b82b-0c48-46f2-833f-d109cff5bce0" width="700">
 
-4. OKを押してすべて閉じたら、**コマンドプロンプトを再起動**してください。
+4. OKを押してすべて閉じてください。
 
-5. 動作確認：
+5. 動作確認はコマンドプロンプトを起動以下のように入力：
 
    ```cmd
    echo %OPENAI_API_KEY%
