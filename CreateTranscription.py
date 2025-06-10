@@ -12,7 +12,6 @@ import time
 TARGET_DURATION = 45 * 60 * 1000 # 45 minutes
 MAX_FILE_SIZE_MB = 25
 
-
 class DotPrinter:
     def __init__(self, interval=1):
         self.stop_event = threading.Event()
@@ -81,7 +80,7 @@ def convert_to_ogg(file_path, file_name, extension, target_ms=TARGET_DURATION):
             if (len(chunk) == 0):
                 break
             filename = "{file_name}-{number}.ogg".format(file_name=file_name,number=(chunk_id))
-            chunk.export(filename, format="ogg")
+            chunk.export(os.path.join(os.path.dirname(file_path), filename), format="ogg")
 
             print(f"\n{filename} を出力しました ({len(chunk) / 1000:.1f} 秒)")
             chunk_start = split_point
@@ -96,7 +95,7 @@ def convert_to_ogg(file_path, file_name, extension, target_ms=TARGET_DURATION):
         print("エラー", str(e))
         return
 
-def send_to_chatgpt(ogg_files):
+def send_to_chatgpt(ogg_files, directory):
     dot_printer = DotPrinter()
     client = OpenAI()
     prompt = ""
@@ -106,7 +105,9 @@ def send_to_chatgpt(ogg_files):
         print('\nChatGPTの文字起こしサービスに「{file}」を送信しています'.format(file=file))
         dot_printer.start()
 
-        with open(file, "rb") as audio_file:
+        absolute_filepath = os.path.join(directory, file)
+
+        with open(absolute_filepath, "rb") as audio_file:
             try:
                 transcription = client.audio.transcriptions.create(
                 model="whisper-1",
@@ -115,9 +116,10 @@ def send_to_chatgpt(ogg_files):
                 prompt=prompt
             )
                 print('\n「{}」の文字起こしを保存しています…'.format(file))
-                with open("{}-文字起こし-{}.txt".format(file.split('.')[0], idx + 1), "w", encoding="utf8") as output_file:
+                filename = "{}-文字起こし-{}.txt".format(file.split('.')[0], idx + 1)
+                with open(os.path.join(directory, filename), "w", encoding="utf8") as output_file:
                     output_file.write(transcription.text)
-                print('\n{}-文字起こし-{} を保存しました！'.format(file.split('.')[0], idx + 1))
+                print('\n{} を保存しました！'.format(filename))
 
                 prompt = transcription.text
 
@@ -139,7 +141,7 @@ def send_to_chatgpt(ogg_files):
     print("一時ファイルを削除中…")
     for file in ogg_files:
         try:
-            os.remove(file)
+            os.remove(os.path.join(directory, file))
         except Exception as e:
             print(f"{file} の削除に失敗: {e}")
 
@@ -147,16 +149,13 @@ if __name__ == "__main__":
     root = tk.Tk()
     root.withdraw()
     file_path = get_file_from_user()
+    directory = os.path.dirname(file_path)
     file_name, extension = os.path.splitext(os.path.basename(file_path))
     
-    ogg_files = [file for file in os.listdir('.') if file.endswith('.ogg') and file_name in file]
+    convert_to_ogg(file_path, file_name, extension)
+
+    ogg_files = [file for file in os.listdir(directory) if file.endswith('.ogg') and file_name in file]
     
-    if len(ogg_files) == 0:
-        convert_to_ogg(file_path, file_name, extension)
-    
-    #get all oggs in directory, find ones with file_name as substring, iterate
-    ogg_files = [file for file in os.listdir('.') if file.endswith('.ogg') and file_name in file]
-    
-    send_to_chatgpt(ogg_files)
+    send_to_chatgpt(ogg_files, directory)
     
     input('\n処理が完了しました。終了するには任意のキーを押してください。')
