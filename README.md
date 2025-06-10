@@ -2,6 +2,13 @@
 
 ## ✅ 必須条件
 
+- ご利用のOSに応じて、以下からバイナリをダウンロードしてください：  
+  👉 [https://github.com/aw-leigh/chatGPT-transcription/releases/tag/v1.0.0](https://github.com/aw-leigh/chatGPT-transcription/releases/tag/v1.0.0)
+
+  | OS | ダウンロードファイル名 |
+  |----|-------------------------|
+  | Windows | `CreateTranscriptionWINDOWS.exe` |
+  | macOS   | `CreateTranscriptionMAC`         |
 - [Whisper API 利用開始ガイド](https://github.com/aw-leigh/chatGPT-transcription/blob/master/WhisperAPISetupGuide.md)にそって、OpenAI APIキーを環境変数 `OPENAI_API_KEY` に設定していること
 - 音声の読み込み・変換のため、[FFmpeg](https://ffmpeg.org/) がインストールされていること：
 
