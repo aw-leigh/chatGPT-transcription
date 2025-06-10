@@ -152,7 +152,7 @@ source ~/.bashrc
 2. 動作確認は次を実行：
 
    ```cmd
-   echo %OPENAI_API_KEY%
+   echo $OPENAI_API_KEY
    ```
    → `sk-...` のようなキーが表示されれば設定完了！
 
