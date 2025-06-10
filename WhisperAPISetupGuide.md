@@ -104,7 +104,7 @@ OpenAI の Whisper（音声文字起こし）APIを使うには、以下の手�
 5. 動作確認はコマンドプロンプトを開いて次を実行：
 
    ```cmd
-   echo %OPENAI_API_KEY%
+   echo $OPENAI_API_KEY
    ```
    → `sk-...` のようなキーが表示されれば設定完了！
 
