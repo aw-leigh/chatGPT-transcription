@@ -118,6 +118,9 @@ Whisper API キーを安全に使うため、環境変数 `OPENAI_API_KEY` を�
 
 1. ターミナルを開いて次を実行：
 
+    <img src="https://github.com/user-attachments/assets/88da4bd6-b372-409a-9edd-7ac12dfa4fdb">
+
+
    ```
    echo $SHELL
    ```
