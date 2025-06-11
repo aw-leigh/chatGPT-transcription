@@ -52,7 +52,7 @@
 
 ### 方法①：🚀 ドラッグ＆ドロップ（**Windowsのみ**）
   
-音声ファイル（例: `interview.mp3`）を `.exe` ファイルにドラッグ＆ドロップ  
+音声ファイル（例: `interview.mp3`）を `CreateTranscriptionWINDOWS.exe` ファイルにドラッグ＆ドロップ  
 自動で処理が開始され、**分割 → 圧縮 → 文字起こし → 出力** されます
 
 ---
