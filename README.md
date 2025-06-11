@@ -20,11 +20,7 @@
     ② 以下を順番にコピペして実行：
 
     ```powershell
-    Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-    ```
-
-    ```powershell
-    choco install ffmpeg
+    winget install --id=Gyan.FFmpeg -e
     ```
 
   - 🍎 **macOS**：  
