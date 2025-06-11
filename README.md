@@ -2,7 +2,43 @@
 
 ## ✅ 必須条件
 
+- ご利用のOSに応じて、以下からバイナリをダウンロードしてください：  
+  👉 [https://github.com/aw-leigh/chatGPT-transcription/releases/tag/v1.0.0](https://github.com/aw-leigh/chatGPT-transcription/releases/tag/v1.0.0)
+
+  | OS | ダウンロードファイル名 |
+  |----|-------------------------|
+  | Windows | `CreateTranscriptionWINDOWS.exe` |
+  | macOS   | `CreateTranscriptionMAC`         |
 - [Whisper API 利用開始ガイド](https://github.com/aw-leigh/chatGPT-transcription/blob/master/WhisperAPISetupGuide.md)にそって、OpenAI APIキーを環境変数 `OPENAI_API_KEY` に設定していること
+- 音声の読み込み・変換のため、FFmpegがインストールされていること：
+
+  - 🪟 **Windows**（管理者権限のPowerShellで実行）：
+
+    ① PowerShell を管理者として起動  
+    <img src="https://github.com/user-attachments/assets/9cc54baa-77f3-4fca-b75b-3aed856ed536" height="400">
+
+    ② 以下を順番にコピペして実行：
+
+    ```powershell
+    Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+    ```
+
+    ```powershell
+    choco install ffmpeg
+    ```
+
+  - 🍎 **macOS**：  
+    ターミナルで以下を順番にコピペして実行：
+
+    <img src="https://github.com/user-attachments/assets/88da4bd6-b372-409a-9edd-7ac12dfa4fdb">
+
+    ```bash
+    brew update
+    ```
+
+    ```bash
+    brew install ffmpeg
+    ```
 
 ## 🔄 処理の流れ
 
@@ -14,7 +50,7 @@
 
 ## 🧑‍💻 使い方
 
-### 方法①：🚀 ドラッグ＆ドロップ（推奨）
+### 方法①：🚀 ドラッグ＆ドロップ（**Windowsのみ**）
   
 音声ファイル（例: `interview.mp3`）を `.exe` ファイルにドラッグ＆ドロップ  
 自動で処理が開始され、**分割 → 圧縮 → 文字起こし → 出力** されます
