@@ -4,12 +4,13 @@ import os
 from openai import OpenAI
 import openai
 from pydub import AudioSegment, silence
+from pydub.utils import mediainfo
 import tkinter as tk
 from tkinter import filedialog
 import threading
 import time
 
-TARGET_DURATION = 45 * 60 * 1000 # 45 minutes
+TARGET_DURATION = 150 * 60 * 1000 # 150 minutes
 MAX_FILE_SIZE_MB = 25
 
 class DotPrinter:
@@ -63,24 +64,25 @@ def convert_to_ogg(file_path, file_name, extension, target_ms=TARGET_DURATION):
         chunk_start = 0
         chunk_id = 1
         audio_length_ms = len(audio)
+        silence_threshold = audio.dBFS - 10
 
         while chunk_start < audio_length_ms:
-            chunk_end = min(chunk_start + target_ms, audio_length_ms)
-            split_point = chunk_end
-
-            # Try to find a silence near the end
-            silence_points = silence.detect_silence(audio[chunk_start:chunk_end], min_silence_len=700, silence_thresh=-40)
+            split_point = min(chunk_start + target_ms, audio_length_ms)
             
-            if silence_points:
-                # Pick the last silence before the end
-                last_silence = silence_points[-1][0]
-                split_point = chunk_start + last_silence
+            # Try to find a silence near the end
+            if split_point != audio_length_ms:
+                silence_points = silence.detect_silence(audio[chunk_start:split_point], min_silence_len=700, silence_thresh=silence_threshold)
+
+                if silence_points:
+                    # Pick the last silence before the end
+                    last_silence = silence_points[-1][0]
+                    split_point = chunk_start + last_silence
 
             chunk = audio[chunk_start:split_point]
             if (len(chunk) == 0):
                 break
             filename = "{file_name}-{number}.ogg".format(file_name=file_name,number=(chunk_id))
-            chunk.export(os.path.join(os.path.dirname(file_path), filename), format="ogg")
+            chunk.export(os.path.join(os.path.dirname(file_path), filename), format="ogg", codec="libopus", bitrate="24k", parameters=["-ar", "24000", "-ac", "1", "-application", "voip"])
 
             print(f"\n{filename} を出力しました ({len(chunk) / 1000:.1f} 秒)")
             chunk_start = split_point
@@ -152,10 +154,12 @@ if __name__ == "__main__":
     directory = os.path.dirname(file_path)
     file_name, extension = os.path.splitext(os.path.basename(file_path))
     
-    convert_to_ogg(file_path, file_name, extension)
+    ogg_files = [file for file in os.listdir(directory) if file.endswith('.ogg') and file_name in file]
+    if len(ogg_files) == 0:
+        convert_to_ogg(file_path, file_name, extension)
 
     ogg_files = [file for file in os.listdir(directory) if file.endswith('.ogg') and file_name in file]
     
-    send_to_chatgpt(ogg_files, directory)
+    send_to_chatgpt(sorted(ogg_files), directory)
     
     input('\n処理が完了しました。終了するには任意のキーを押してください。')
