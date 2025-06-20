@@ -20,11 +20,7 @@
     ② 以下を順番にコピペして実行：
 
     ```powershell
-    Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-    ```
-
-    ```powershell
-    choco install ffmpeg
+    winget install --id=Gyan.FFmpeg -e
     ```
 
   - 🍎 **macOS**：  
@@ -52,7 +48,7 @@
 
 ### 方法①：🚀 ドラッグ＆ドロップ（**Windowsのみ**）
   
-音声ファイル（例: `interview.mp3`）を `.exe` ファイルにドラッグ＆ドロップ  
+音声ファイル（例: `interview.mp3`）を `CreateTranscriptionWINDOWS.exe` ファイルにドラッグ＆ドロップ  
 自動で処理が開始され、**分割 → 圧縮 → 文字起こし → 出力** されます
 
 ---
