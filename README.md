@@ -3,7 +3,7 @@
 ## ✅ 必須条件
 
 - ご利用のOSに応じて、以下からバイナリをダウンロードしてください：  
-  👉 [https://github.com/aw-leigh/chatGPT-transcription/releases/tag/v1.0.0](https://github.com/aw-leigh/chatGPT-transcription/releases/tag/v1.0.0)
+  👉 [https://github.com/aw-leigh/chatGPT-transcription/releases/tag/v1.1.0](https://github.com/aw-leigh/chatGPT-transcription/releases/tag/v1.1.0)
 
   | OS | ダウンロードファイル名 |
   |----|-------------------------|
